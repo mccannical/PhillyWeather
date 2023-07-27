@@ -20,7 +20,7 @@
 	<!-- Header -->
 	<header id="header">
 		<div class="logo">
-			<span class="fas fa-cloud"></span>
+			<span id="icon" class="fas fa-cloud-sun"></span>
 		</div>
 		<div class="content">
 			<div class="inner">
@@ -31,7 +31,7 @@
 		</div>
 		<nav>
 			<ul>
-				<li><a href="https://us-central1-weather-station-371400.cloudfunctions.net/WeatherOrNot?sendWarning=y">Warn Everyone</a></li>
+				<li><a id="warn" href="URL:void(0)"></a></li>
 
 			</ul>
 		</nav>
@@ -55,18 +55,28 @@
 <script src="assets/js/util.js"></script>
 <script src="assets/js/main.js"></script>
 <script>
-		const callHome = async () => {
+		const callHome = async (url) => {
 			try {
-				let callJson = await fetch('https://us-central1-weather-station-371400.cloudfunctions.net/WeatherOrNot/?sendNotifications=n', {mode: 'cors',});
+				let callJson = await fetch(url, {mode: 'cors',});
 				return await callJson.json();
 			} catch (error) {
 				return error;
 			}
-
 		}
 		window.onload = async () => {
-				const results = document.getElementById("results");
-				results.innerText = await callHome();
+				results = document.getElementById("results");
+				icon = document.getElementById("icon")
+				warn = document.getElementById("warn")
+
+				answer = await callHome('http://localhost:8080/?sendNotifications=n');
+				warn.innerText = answer;
+
+				if (answer.toLowerCase().indexOf("normal") === -1) {
+					results.innerText = answer;
+					warn.innerText = "Warn Everyone";
+					icon.className = "fas fa-exclamation-triangle";
+					warn.href = 'http://localhost:8080/?sendNotifications=n';
+				}
 		}
 
 </script>
